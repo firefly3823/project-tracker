@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Col, Row } from 'react-bootstrap'
+import { Col, Row } from 'react-bootstrap'
 import project from './project.svg'
 import ProjcetCard from '../components/ProjectCard'
 import { Link } from 'react-router-dom'
+import { homeProjectAPI } from '../services/allAPI'
 
 function Home() {
-
   const [login, setlogin] = useState(false)
   useEffect(() => {
     if (sessionStorage.getItem("token")) {
@@ -13,7 +13,21 @@ function Home() {
     } else {
       setlogin(false)
     }
+    getHomeProjects()
   }, [])
+  const [homeProjects,setHomeProjects] = useState([])
+
+  const getHomeProjects = async()=>{
+    const result = await homeProjectAPI()
+    // console.log(result.data);
+    if (result.status === 200) {
+      setHomeProjects(result.data)
+    }else{
+      console.log(result);
+      console.log(result.responese.data);
+    }
+  }
+
   return (
     <>
       <div style={{ width: "100%" }}>
@@ -39,9 +53,14 @@ function Home() {
         <h1 className='text-center'>Explore our project</h1>
         <marquee>
           <Row>
-            <Col sm={2} md={6} lg={4}>
-              <ProjcetCard />
-            </Col>
+            {
+              homeProjects.length>0?homeProjects.map((project,index)=>(
+                <Col key={index+1} sm={2} md={6} lg={4}>
+                  <ProjcetCard project={project} />
+                </Col>
+              )):<div className='text-light'>LOGIN TO VIEW ALL PROJECTS</div>
+            }
+            
           </Row>
         </marquee>
       </div>
