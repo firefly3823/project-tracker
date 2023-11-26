@@ -5,7 +5,7 @@ function Header({ insideDashboard }) {
     return (
         <Navbar expand="lg" className="bg-body-tertiary">
             <Container>
-                <Navbar.Brand href="/projects">PROJECT FAIR</Navbar.Brand>
+                <Navbar.Brand href="/">PROJECT FAIR</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">

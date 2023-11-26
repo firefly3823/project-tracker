@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Button, Col, Modal, Row } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { AddProjectApi } from '../services/allAPI';
+import { addProjectResponseContext } from '../contexts/ContextShare';
 
 function AddProject() {
+  const { setAddProjectResponse } = useContext(addProjectResponseContext)
   const [projectDetails, setProjectDetails] = useState({
     title: "", languages: "", overview: "", github: "", website: "", projectThumb: ""
   })
@@ -55,7 +57,7 @@ function AddProject() {
         if (result.status === 200) {
           console.log(result.data);
           handleClose();
-          toast.success("Project Added")
+          setAddProjectResponse(result.data)
         } else {
           console.log(result);
           console.log(result.response.data);

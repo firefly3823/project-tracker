@@ -23,8 +23,9 @@ function Home() {
     if (result.status === 200) {
       setHomeProjects(result.data)
     }else{
+      // console.log(result);
+      // console.log(result.responese.data);
       console.log(result);
-      console.log(result.responese.data);
     }
   }
 

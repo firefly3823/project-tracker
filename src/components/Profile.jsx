@@ -11,7 +11,7 @@ function Profile() {
         <Card className='p-4'>
             <div className="d-flex justify-content-between">
                 <h5>PROFILE</h5>
-                <Button onClick={() => setOpen(!open)} variant="success" className="btn-outline-success"><i class="fa-solid fa-check" style={{ color: "#ffff" }}></i></Button>
+                <Button onClick={() => setOpen(!open)} variant="success" className="btn-outline-success"><i className="fa-solid fa-check" style={{ color: "#ffff" }}></i></Button>
             </div>
             {/* <Collapse in={open}> */}
                 <label className='text-center'>

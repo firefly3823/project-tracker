@@ -19,22 +19,23 @@ function ProjectCard({project}) {
       </Card>
       <Modal size={'lg'} show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Project Details</Modal.Title>
+          <Modal.Title className='text-primary'>Project Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Row>
-              <Col md={5} >
-                <img src={project_thumb} className='img-fluid' alt="" />
+              <Col md={6}>
+                <img src={project?`${BASE_URL}/uploads/${project?.projectThumb}`:project_thumb} className='img-fluid' alt="" />
               </Col>
-            <Col md={7} className='w-100' >
-              <h2>{project.title}</h2>
-              <p>{project.overview}</p>
+            <Col md={6} className='card'>
+              <h2 className='card-title text-primary'>{project?.title}</h2>
+              <p className='card-text'><span className='text-primary'>Language Used :</span> {project?.language} </p>
+              <p className='card-text'><span className='text-primary'>Overview</span> : {project?.overview}</p>
             </Col>
           </Row>
         </Modal.Body>
         <Modal.Footer className='justify-content-start'>
-          <Link className='me-5' to={project?.website}><i class="fa-solid fa-link fa-2xl"></i></Link>
-          <Link to={project?.github}><i class="fa-brands fa-github-alt fa-2xl"></i></Link>
+          <Link className='me-5' to={project?.website}><i className="fa-solid fa-link fa-2xl"></i></Link>
+          <Link to={project?.github}><i className="fa-brands fa-github-alt fa-2xl"></i></Link>
         </Modal.Footer>
       </Modal>
     </>
