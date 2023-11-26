@@ -1,16 +1,79 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Col, Modal, Row } from 'react-bootstrap';
 import { BASE_URL } from '../services/baseUrl';
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
+import { editProjectAPI } from '../services/allAPI';
 
 
 function EditProject({ project }) {
     const [projectDetails, setProjectDetails] = useState({
-        title: "", languages: "", overview: "", github: "", website: "", projectThumb: ""
+        id:project._id,title: project.title, languages: project.language
+, overview: project.overview, github:project.github, website:project.website, projectThumb: ""
     })
+    console.log(project);
+    const [preview, setPreview] = useState("")
     const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
+    const handleClose = () => {
+        setShow(false)
+        setProjectDetails({
+            title: project.title, languages: project.language ,overview: project.overview, github: project.github, website: project.website, projectThumb: ""
+        })
+        setPreview("");
+    };
     const handleShow = () => setShow(true);
 
+    useEffect(()=>{
+        if (projectDetails.projectThumb) {
+            setPreview(URL.createObjectURL(projectDetails.projectThumb))
+        }
+    },[projectDetails.projectThumb])
+
+    const handleUpdate= async ()=>{
+        const { id, title, languages, overview, github, website, projectThumb } = projectDetails
+        if (!id || !title || !languages || !overview || !github || !website){
+            toast.warning("Values cannot be Null")
+        }else{
+            const reqBody = new FormData()
+            reqBody.append("title", title)
+            reqBody.append("language", languages)
+            reqBody.append("overview", overview)
+            reqBody.append("github", github)
+            reqBody.append("website", website)
+            preview? reqBody.append("projectThumb",projectThumb):reqBody.append(project.projectThumb)
+            const token = sessionStorage.getItem("token")
+        if (preview) {
+            let reqHeader = {
+                "Content-Type": "multipart/form-data",
+                "Authorization": `Bearer ${token}`
+            }
+            //api call
+            const result = await editProjectAPI(id,reqBody,reqHeader)
+            if (result.status === 200) {
+                handleClose()
+                //pass response to manage projects
+            }else{
+                console.log(result);
+                console.log(result.response.data);
+            }
+
+        }else{
+            let reqHeader = {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+            // api call
+            const result = await editProjectAPI(id, reqBody, reqHeader)
+            if (result.status === 200) {
+                handleClose()
+                //pass response to manage projects
+            } else {
+                console.log(result);
+                console.log(result.response.data);
+            }
+        }
+    }
+    }
     return (
         <>
             <button className='btn' onClick={handleShow}> <i class="fa-regular fa-pen-to-square fa-xl" style={{ color: "#04eb00" }}></i></button>
@@ -29,26 +92,27 @@ function EditProject({ project }) {
                     <Row>
                         <Col sm={12} md={6} lg={6} >
                             <label>
-                                <input type="file" style={{ display: "none" }} />
-                                <img className='img-fluid' src={`${BASE_URL}/uploads/${project.projectThumb}`} alt="thumb" />
+                                <input type="file" style={{ display: "none" }} onChange={e=>setProjectDetails({...projectDetails, projectThumb:e.target.files[0]})} />
+                                <img className='img-fluid' src={preview?preview:`${BASE_URL}/uploads/${project.projectThumb}`} alt="thumb" />
                             </label>
                         </Col>
                         <Col className='ps-4 d-flex flex-column justify-content-center' sm={12} md={6} lg={6}>
-                            <div className='mb-4'><input type="text" className='form-control' placeholder='Project title' value={project.title} id="" /></div>
-                            <div className='mb-4'><input type="text" className='form-control' placeholder='Language used' value={project.language} id="" /></div>
-                            <div className='mb-4'><input type="text" className='form-control' placeholder='Github Link' value={project.github} id="" /></div>
-                            <div className='mb-4'><input type="text" className='form-control' value={project.website} placeholder='Website Link' name="" id="" /></div>
+                            <div className='mb-4'><input type="text" className='form-control' placeholder='Project title' onChange={e=>setProjectDetails({...projectDetails,title:e.target.value})} value={projectDetails.title} id="" /></div>
+                            <div className='mb-4'><input type="text" className='form-control' placeholder='Language used' onChange={e => setProjectDetails({ ...projectDetails, languages: e.target.value })}  value={projectDetails.languages} id="" /></div>
+                            <div className='mb-4'><input type="text" className='form-control' placeholder='Github Link' onChange={e => setProjectDetails({ ...projectDetails, github: e.target.value })} value={projectDetails.github} id="" /></div>
+                            <div className='mb-4'><input type="text" className='form-control' onChange={e => setProjectDetails({ ...projectDetails, website: e.target.value })} value={projectDetails.website} placeholder='Website Link' name="" id="" /></div>
                         </Col>
                     </Row>
-                    <div className='mt-4'><input type="text" className='form-control' placeholder='Project OverView' value={project.overview} id="" /></div>
+                    <div className='mt-4'><input type="text" className='form-control' placeholder='Project OverView' onChange={e => setProjectDetails({ ...projectDetails, overview: e.target.value })} value={projectDetails.overview} id="" /></div>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
                         CANCEL
                     </Button>
-                    <Button onClick={handleClose} variant="primary">Apply Changes</Button>
+                    <Button onClick={handleUpdate} variant="primary">Apply Changes</Button>
                 </Modal.Footer>
             </Modal>
+            <ToastContainer position='top-right' autoClose={2000} theme='colored' />
         </>
     )
 }

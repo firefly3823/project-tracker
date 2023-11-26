@@ -42,7 +42,8 @@ function ManageProject() {
                         addProjectResponse.title? <Alert className='bg-primary' dismissible><span className='fw-bolder'>{addProjectResponse.title}</span>  Added successfully</Alert>:null
                     }
                     {
-                        userProjects?.length > 0 ? userProjects.map((project, index) => (<Card.Text className='mt-5 border p-3 rounded border-success d-flex justify-content-between'>
+                        userProjects?.length > 0 ? userProjects.map((project, index) => (
+                        <Card.Text className='mt-1 border p-2 rounded border-success d-flex justify-content-between align-items-center'>
                             <h6>{project?.title}</h6>
                             <div className='d-flex align-items-center'>
                                 <a href={`${project.github}`} rel="noreferrer" target="_blank"><i className="fa-brands fa-github fa-xl" style={{ color: "#04eb00" }}></i></a>
