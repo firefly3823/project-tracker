@@ -1,10 +1,11 @@
 import { useState, React, useEffect, useContext } from 'react'
-import { Card } from 'react-bootstrap'
+import { Alert, Card } from 'react-bootstrap'
 import AddProject from './AddProject'
 import { userProjectAPI } from '../services/allAPI'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { addProjectResponseContext } from '../contexts/ContextShare'
+import EditProject from './EditProject'
 
 
 function ManageProject() {
@@ -38,11 +39,14 @@ function ManageProject() {
                         <div variant="success"><AddProject /></div>
                     </div>
                     {
+                        addProjectResponse.title? <Alert className='bg-primary' dismissible><span className='fw-bolder'>{addProjectResponse.title}</span>  Added successfully</Alert>:null
+                    }
+                    {
                         userProjects?.length > 0 ? userProjects.map((project, index) => (<Card.Text className='mt-5 border p-3 rounded border-success d-flex justify-content-between'>
                             <h6>{project?.title}</h6>
-                            <div>
-                                <a href={`${project.github}`} rel="noreffer" target="_blank"><i className="fa-brands fa-github fa-xl pe-4" style={{ color: "#04eb00" }}></i></a>
-                                <i class="fa-regular fa-pen-to-square fa-xl pe-4" style={{ color: "#04eb00" }}></i>
+                            <div className='d-flex align-items-center'>
+                                <a href={`${project.github}`} rel="noreferrer" target="_blank"><i className="fa-brands fa-github fa-xl" style={{ color: "#04eb00" }}></i></a>
+                                <div><EditProject project={project}/></div>
                                 <i className="fa-solid fa-trash fa-xl" style={{ color: "#ff1a3c" }}></i>
                             </div>
                         </Card.Text>)):
