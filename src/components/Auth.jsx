@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import LoginReg from './LoginReg.svg'
 import { Button, Form } from 'react-bootstrap'
@@ -6,10 +6,12 @@ import { useState } from 'react'
 import { loginAPI, registerAPI } from '../services/allAPI'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
+import { tokenAuthContest } from '../contexts/AuthToken'
 
 
 
 function Auth({ register }) {
+    const {setIsAuth} = useContext(tokenAuthContest)
     const navigate = useNavigate()
     const [userData, setUserData] = useState({
         username: "", email: "", passwrd: ""
@@ -44,6 +46,7 @@ function Auth({ register }) {
             if (result.status === 200) {
                 sessionStorage.setItem("existingUser", JSON.stringify(result.data.existingUser))
                 sessionStorage.setItem("token", result.data.token)
+                setIsAuth(true)
                 setUserData({
                     email: "", password: ""
                 })

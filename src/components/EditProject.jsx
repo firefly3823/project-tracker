@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Button, Col, Modal, Row } from 'react-bootstrap';
 import { BASE_URL } from '../services/baseUrl';
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { editProjectAPI } from '../services/allAPI';
+import { editProjectResponseContext } from '../contexts/ContextShare';
+
 
 
 function EditProject({ project }) {
+    const { setEditProjectResponse } = useContext(editProjectResponseContext)
+    
     const [projectDetails, setProjectDetails] = useState({
         id:project._id,title: project.title, languages: project.language
 , overview: project.overview, github:project.github, website:project.website, projectThumb: ""
     })
-    console.log(project);
+    
     const [preview, setPreview] = useState("")
     const [show, setShow] = useState(false);
     const handleClose = () => {
@@ -28,10 +32,10 @@ function EditProject({ project }) {
             setPreview(URL.createObjectURL(projectDetails.projectThumb))
         }
     },[projectDetails.projectThumb])
-
     const handleUpdate= async ()=>{
         const { id, title, languages, overview, github, website, projectThumb } = projectDetails
-        if (!id || !title || !languages || !overview || !github || !website){
+        console.log(preview);
+        if (!title || !languages || !overview || !github || !website){
             toast.warning("Values cannot be Null")
         }else{
             const reqBody = new FormData()
@@ -40,8 +44,9 @@ function EditProject({ project }) {
             reqBody.append("overview", overview)
             reqBody.append("github", github)
             reqBody.append("website", website)
-            preview? reqBody.append("projectThumb",projectThumb):reqBody.append(project.projectThumb)
+            preview ? reqBody.append("projectThumb", projectThumb) : reqBody.append("projectThumb",project.projectThumb)
             const token = sessionStorage.getItem("token")
+            
         if (preview) {
             let reqHeader = {
                 "Content-Type": "multipart/form-data",
@@ -52,6 +57,7 @@ function EditProject({ project }) {
             if (result.status === 200) {
                 handleClose()
                 //pass response to manage projects
+                setEditProjectResponse(result.data)
             }else{
                 console.log(result);
                 console.log(result.response.data);
@@ -67,6 +73,7 @@ function EditProject({ project }) {
             if (result.status === 200) {
                 handleClose()
                 //pass response to manage projects
+                setEditProjectResponse(result.data)
             } else {
                 console.log(result);
                 console.log(result.response.data);
@@ -76,7 +83,7 @@ function EditProject({ project }) {
     }
     return (
         <>
-            <button className='btn' onClick={handleShow}> <i class="fa-regular fa-pen-to-square fa-xl" style={{ color: "#04eb00" }}></i></button>
+            <button className='btn' onClick={handleShow}> <i className="fa-regular fa-pen-to-square fa-xl" style={{ color: "#04eb00" }}></i></button>
             <Modal
                 show={show}
                 onHide={handleClose}
